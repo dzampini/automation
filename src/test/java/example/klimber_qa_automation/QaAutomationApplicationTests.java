@@ -33,18 +33,18 @@ class QaAutomationApplicationTests {
 		String mail = "@gmail.com";
 		String banco = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         // La cadena en donde iremos agregando un carácter aleatorio
-        String cadena = "";
+		StringBuilder cadena = new StringBuilder();
         for (int x = 0; x < longitud; x++) {
             int indiceAleatorio = numeroAleatorioEnRango(0, banco.length() - 1);
             char caracterAleatorio = banco.charAt(indiceAleatorio);
-            cadena += (name+caracterAleatorio+mail);
+        	cadena.append(caracterAleatorio);
         }
-        return cadena;
+        return name + cadena.toString() + mail;
     }
 
-    public static int numeroAleatorioEnRango(int minimo, int maximo) {
-        // nextInt regresa en rango pero con límite superior exclusivo, por eso sumamos 1
-        return ThreadLocalRandom.current().nextInt(minimo, maximo + 1);
+    static int numeroAleatorioEnRango(int min, int maximo) {
+        
+        return ThreadLocalRandom.current().nextInt(min, maximo + 1);
     }
 
 		
@@ -138,7 +138,7 @@ class QaAutomationApplicationTests {
 		driver.findElement(By.id("Name")).sendKeys(name);
 		driver.findElement(By.id("Surname")).sendKeys(surname);
 		driver.findElement(By.id("ID_Number")).sendKeys(doc);
-		driver.findElement(By.id("txtEmail")).sendKeys(mailAleatorio(1));
+		driver.findElement(By.id("txtEmail")).sendKeys(mailAleatorio(12));
 
 		driver.findElement(By.xpath("//span[@id='select2-Gender-container']")).click();
 		driver.findElement(By.xpath("//li[@class='select2-results__option select2-results__option--highlighted' and contains(text(), 'Masculino')]")).click();
