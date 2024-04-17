@@ -11,8 +11,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.JavascriptExecutor;
 import java.time.Duration;
-
-
+import java.util.concurrent.ThreadLocalRandom;
 
 
 @SpringBootTest
@@ -21,6 +20,37 @@ class QaAutomationApplicationTests {
 
 	private WebDriver driver;
 	String url = "https://purchase-testing.klimber.com/ar/GroupLife/Index";
+
+	public static void main(String[] args) {
+        int longitud = 12;
+        String cadena = mailAleatorio(longitud);
+        System.out.printf("Cadena aleatoria de %d caracteres: %s\n", longitud, cadena);
+    }
+
+    public static String mailAleatorio(int longitud) {
+        // El banco de caracteres
+        String name = "arlopedro";
+		String mail = "@gmail.com";
+		String banco = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        // La cadena en donde iremos agregando un carácter aleatorio
+        String cadena = "";
+        for (int x = 0; x < longitud; x++) {
+            int indiceAleatorio = numeroAleatorioEnRango(0, banco.length() - 1);
+            char caracterAleatorio = banco.charAt(indiceAleatorio);
+            cadena += (name+caracterAleatorio+mail);
+        }
+        return cadena;
+    }
+
+    public static int numeroAleatorioEnRango(int minimo, int maximo) {
+        // nextInt regresa en rango pero con límite superior exclusivo, por eso sumamos 1
+        return ThreadLocalRandom.current().nextInt(minimo, maximo + 1);
+    }
+
+		
+
+
+
 
 	@BeforeEach
 	
@@ -46,7 +76,13 @@ class QaAutomationApplicationTests {
 		String name = "Damian";
 		String surname = "Zampini";
 		String doc = "12345678";
-		String email ="Damianzampini@gmail.com";
+		String pass = "Dynamic1234";
+		String street ="pedro goyena";
+		String houseNumber = "5";
+		String dpto = "c";
+		String floor ="3";
+		String zipCode = "1024";
+		String placeOfBirth = "Buenos Aires";
 
 
 		//Carga de url
@@ -65,12 +101,13 @@ class QaAutomationApplicationTests {
 
 		//Seleccion de dropdown y contenido
 
+
 		Select drpprovince = new Select(driver.findElement(By.id("province")));
-		drpprovince.selectByVisibleText(province);								
-		WebElement checkbox_one = driver.findElement(By.id("chkDisability"));
-
+		drpprovince.selectByVisibleText(province);			
+		
 		//Seleccion de checkboxes sobre planes de seguros
-
+		
+		WebElement checkbox_one = driver.findElement(By.id("chkDisability"));
 		JavascriptExecutor jse = (JavascriptExecutor) driver;
 		jse.executeScript("arguments[0].click();", checkbox_one);
 		WebElement checkbox_two = driver.findElement(By.id("chkAccident"));
@@ -101,11 +138,44 @@ class QaAutomationApplicationTests {
 		driver.findElement(By.id("Name")).sendKeys(name);
 		driver.findElement(By.id("Surname")).sendKeys(surname);
 		driver.findElement(By.id("ID_Number")).sendKeys(doc);
-		driver.findElement(By.id("txtEmail")).sendKeys(email);
+		driver.findElement(By.id("txtEmail")).sendKeys(mailAleatorio(1));
 
-		System.out.println("Test de carga de contenido y automatización de flujo");
+		driver.findElement(By.xpath("//span[@id='select2-Gender-container']")).click();
+		driver.findElement(By.xpath("//li[@class='select2-results__option select2-results__option--highlighted' and contains(text(), 'Masculino')]")).click();
+		driver.findElement(By.xpath("//span[@id='select2-CivilStatus-container']")).click();
+		driver.findElement(By.xpath("//li[@class='select2-results__option' and contains(text(), 'Casada/o')]")).click();
+		driver.findElement(By.id("Password")).sendKeys(pass);
+		driver.findElement(By.id("Street")).sendKeys(street);
+		driver.findElement(By.id("HouseNumber")).sendKeys(houseNumber);
+		driver.findElement(By.id("Floor")).sendKeys(floor);
+		driver.findElement(By.id("Apartment")).sendKeys(dpto);
+		driver.findElement(By.id("zipCode")).sendKeys(zipCode);
 
-		driver.close();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2)); 
+		driver.findElement(By.xpath("//button[@id='btnRegister' and contains(text(), 'Siguiente')]")).click();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2)); 
+
+		//driver.findElement(By.id("btnRegister")).click();
+
+		driver.findElement(By.xpath("//span[@id='select2-Nationality-container']")).click();
+		driver.findElement(By.xpath("//li[@class='select2-results__option select2-results__option--highlighted' and contains(text(), 'Argentina')]")).click();
+		driver.findElement(By.id("PlaceOfBirth")).sendKeys(placeOfBirth); 
+
+		driver.findElement(By.id("txtOccupation")).sendKeys(zipCode);
+		driver.findElement(By.id("txtSalaryAnual")).sendKeys(zipCode);
+		driver.findElement(By.id("txtFullName")).sendKeys(zipCode);
+		driver.findElement(By.id("txtNumberId")).sendKeys(zipCode);
+		driver.findElement(By.id("txtOccupation")).sendKeys(zipCode);
+
+		WebElement chkExposedPerson = driver.findElement(By.id("chkExposedPerson"));
+		JavascriptExecutor jse_hkExposedPerson  = (JavascriptExecutor) driver;
+		jse_hkExposedPerson .executeScript("arguments[0].click();", chkExposedPerson );
+
+		
+		
+		//System.out.println("Test de carga de contenido y automatización de flujo");
+
+		//driver.close();
 		
 	}
 	
