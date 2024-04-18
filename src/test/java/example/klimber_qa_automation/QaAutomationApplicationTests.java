@@ -12,6 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.JavascriptExecutor;
 import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 
 @SpringBootTest
@@ -22,16 +23,16 @@ class QaAutomationApplicationTests {
 	String url = "https://purchase-testing.klimber.com/ar/GroupLife/Index";
 
 	public static void main(String[] args) {
-        int longitud = 12;
+        int longitud = 3;
         String cadena = mailAleatorio(longitud);
         System.out.printf("Cadena aleatoria de %d caracteres: %s\n", longitud, cadena);
     }
 
     public static String mailAleatorio(int longitud) {
         // El banco de caracteres
-        String name = "arlopedro";
+		String name = "damian";
 		String mail = "@gmail.com";
-		String banco = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		String banco = "1234567890";
         // La cadena en donde iremos agregando un carácter aleatorio
 		StringBuilder cadena = new StringBuilder();
         for (int x = 0; x < longitud; x++) {
@@ -39,17 +40,33 @@ class QaAutomationApplicationTests {
             char caracterAleatorio = banco.charAt(indiceAleatorio);
         	cadena.append(caracterAleatorio);
         }
-        return name + cadena.toString() + mail;
+        return name+cadena.toString() + mail;
+
+    }
+
+	public static void mailPass(String[] args) {
+        int longitud = 3;
+		String cadenaPass = passAleatorio(longitud);
+        System.out.printf("Cadena aleatoria de %d caracteres: %s\n", longitud, cadenaPass);
+    }
+
+	public static String passAleatorio(int longitud) {
+        // El banco de caracteres
+		String pass = "1234567890";
+        // La cadena en donde iremos agregando un carácter aleatorio
+		StringBuilder cadenaPass= new StringBuilder();
+        for (int x = 0; x < longitud; x++) {
+            int indiceAleatorio = numeroAleatorioEnRango(0, pass.length() - 1);
+            char caracterAleatorio = pass.charAt(indiceAleatorio);
+        	cadenaPass.append(caracterAleatorio);
+        }
+        return cadenaPass.toString();
     }
 
     static int numeroAleatorioEnRango(int min, int maximo) {
         
         return ThreadLocalRandom.current().nextInt(min, maximo + 1);
     }
-
-		
-
-
 
 
 	@BeforeEach
@@ -64,6 +81,7 @@ class QaAutomationApplicationTests {
 		   en este primer test se carga información del usuario y se procede a
 		   la siguiente pagina ----- */
 
+	@SuppressWarnings("deprecation")
 	@Test 
 	void LoadContentFirstPage() {
 
@@ -76,7 +94,7 @@ class QaAutomationApplicationTests {
 		String name = "Damian";
 		String surname = "Zampini";
 		String doc = "12345678";
-		String pass = "Dynamic1234";
+		//String pass = "Dynamic1234";
 		String street ="pedro goyena";
 		String houseNumber = "5";
 		String dpto = "c";
@@ -138,26 +156,36 @@ class QaAutomationApplicationTests {
 		driver.findElement(By.id("Name")).sendKeys(name);
 		driver.findElement(By.id("Surname")).sendKeys(surname);
 		driver.findElement(By.id("ID_Number")).sendKeys(doc);
-		driver.findElement(By.id("txtEmail")).sendKeys(mailAleatorio(12));
+		driver.findElement(By.id("txtEmail")).sendKeys(mailAleatorio(3));
 
 		driver.findElement(By.xpath("//span[@id='select2-Gender-container']")).click();
 		driver.findElement(By.xpath("//li[@class='select2-results__option select2-results__option--highlighted' and contains(text(), 'Masculino')]")).click();
 		driver.findElement(By.xpath("//span[@id='select2-CivilStatus-container']")).click();
 		driver.findElement(By.xpath("//li[@class='select2-results__option' and contains(text(), 'Casada/o')]")).click();
-		driver.findElement(By.id("Password")).sendKeys(pass);
+		driver.findElement(By.id("Password")).sendKeys(passAleatorio(8));
 		driver.findElement(By.id("Street")).sendKeys(street);
 		driver.findElement(By.id("HouseNumber")).sendKeys(houseNumber);
 		driver.findElement(By.id("Floor")).sendKeys(floor);
 		driver.findElement(By.id("Apartment")).sendKeys(dpto);
 		driver.findElement(By.id("zipCode")).sendKeys(zipCode);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2)); 
-		driver.findElement(By.xpath("//button[@id='btnRegister' and contains(text(), 'Siguiente')]")).click();
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2)); 
+		
+		//driver.findElement(By.xpath("//button[@id='btnRegister' and contains(text(), 'Siguiente')]")).click();
+		
+
+		//driver.findElement(By.xpath("//button[@id='btnRegister']")).click();
+		WebElement btn_siguiente = driver.findElement(By.xpath("//button[@type='submit' and @id='btnRegister' and contains(text(), 'Siguiente')]"));
+		JavascriptExecutor jsex_btn_siguiente = (JavascriptExecutor) driver;
+		jsex_btn_siguiente.executeScript("arguments[0].click();", btn_siguiente);
+		
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+
 
 		//driver.findElement(By.id("btnRegister")).click();
 
-		driver.findElement(By.xpath("//span[@id='select2-Nationality-container']")).click();
+		/*driver.findElement(By.xpath("//span[@id='select2-Nationality-container']")).click();
 		driver.findElement(By.xpath("//li[@class='select2-results__option select2-results__option--highlighted' and contains(text(), 'Argentina')]")).click();
 		driver.findElement(By.id("PlaceOfBirth")).sendKeys(placeOfBirth); 
 
@@ -169,7 +197,7 @@ class QaAutomationApplicationTests {
 
 		WebElement chkExposedPerson = driver.findElement(By.id("chkExposedPerson"));
 		JavascriptExecutor jse_hkExposedPerson  = (JavascriptExecutor) driver;
-		jse_hkExposedPerson .executeScript("arguments[0].click();", chkExposedPerson );
+		jse_hkExposedPerson .executeScript("arguments[0].click();", chkExposedPerson );*/
 
 		
 		
@@ -179,7 +207,7 @@ class QaAutomationApplicationTests {
 		
 	}
 	
-	/* ---- Test ejemplo de assert de contenido de texto, se validan textos de la primer pagina---- */
+	/* ---- Test ejemplo de assert de contenido de texto, se validan textos de la primer pagina---- 
 
 	@Test 
 	
@@ -208,7 +236,7 @@ class QaAutomationApplicationTests {
 		System.out.println("Test de validación de elementos de texto");
 		driver.close();
 
-	}
+	}*/
 
 	
 }
