@@ -8,11 +8,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.JavascriptExecutor;
 import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 
 @SpringBootTest
@@ -74,14 +75,12 @@ class QaAutomationApplicationTests {
 	void getup (){
 
 		driver = new ChromeDriver();
+		driver.manage().deleteAllCookies();
 		
 	}
 	
-	/* ---- test ejemplo de carga de contenido y ejecución de elementos del DOM,
-		   en este primer test se carga información del usuario y se procede a
-		   la siguiente pagina ----- */
+	
 
-	@SuppressWarnings("deprecation")
 	@Test 
 	void LoadContentFirstPage() {
 
@@ -101,11 +100,21 @@ class QaAutomationApplicationTests {
 		String floor ="3";
 		String zipCode = "1024";
 		String placeOfBirth = "Buenos Aires";
+		String occupation = "programador";
+		String salary= "1.700.000";
+		String cony_name = "lady gaga";
+		String cony_doc = "12345679";
+		String cony_occupation ="cantante";
+		String card_number ="4338567898762345";
+		
+
 
 
 		//Carga de url
 		
 		driver.get(url); 
+
+		//---------------------------------------------   First step   ---------------------------------------------------//
 
 		//espera de carga de 2 segundos
 		
@@ -118,7 +127,6 @@ class QaAutomationApplicationTests {
 		driver.findElement(By.id("txtPhoneNumber")).sendKeys(phoneNumber);
 
 		//Seleccion de dropdown y contenido
-
 
 		Select drpprovince = new Select(driver.findElement(By.id("province")));
 		drpprovince.selectByVisibleText(province);			
@@ -146,7 +154,13 @@ class QaAutomationApplicationTests {
 
 		//Selección de botón y click para pasar a la siguiente página
 
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("btnSaveStep1")));
+
 		driver.findElement(By.id("btnSaveStep1")).click();
+
+		//---------------------------------------------   Second step   ---------------------------------------------------//
+
 
 		//Carga de contenido en la siguiente pagina y cierre de test
 
@@ -168,46 +182,53 @@ class QaAutomationApplicationTests {
 		driver.findElement(By.id("Floor")).sendKeys(floor);
 		driver.findElement(By.id("Apartment")).sendKeys(dpto);
 		driver.findElement(By.id("zipCode")).sendKeys(zipCode);
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
+		WebDriverWait wait_second = new WebDriverWait(driver, 10);
+
+		wait_second.until(ExpectedConditions.visibilityOfElementLocated(By.id("btnRegister")));
 		
-		//driver.findElement(By.xpath("//button[@id='btnRegister' and contains(text(), 'Siguiente')]")).click();
+
+		driver.findElement(By.id("btnRegister")).click();
+		driver.findElement(By.id("btnRegister")).click();
 		
-
-		//driver.findElement(By.xpath("//button[@id='btnRegister']")).click();
-		WebElement btn_siguiente = driver.findElement(By.xpath("//button[@type='submit' and @id='btnRegister' and contains(text(), 'Siguiente')]"));
-		JavascriptExecutor jsex_btn_siguiente = (JavascriptExecutor) driver;
-		jsex_btn_siguiente.executeScript("arguments[0].click();", btn_siguiente);
-		
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		WebDriverWait wait_third = new WebDriverWait(driver, 20);
+		wait_third.until(ExpectedConditions.visibilityOfElementLocated(By.id("PlaceOfBirth")));
 
 
+		//---------------------------------------------   Third step   ---------------------------------------------------//
 
-		//driver.findElement(By.id("btnRegister")).click();
 
-		/*driver.findElement(By.xpath("//span[@id='select2-Nationality-container']")).click();
+		driver.findElement(By.xpath("//span[@id='select2-Nationality-container']")).click();
 		driver.findElement(By.xpath("//li[@class='select2-results__option select2-results__option--highlighted' and contains(text(), 'Argentina')]")).click();
 		driver.findElement(By.id("PlaceOfBirth")).sendKeys(placeOfBirth); 
 
-		driver.findElement(By.id("txtOccupation")).sendKeys(zipCode);
-		driver.findElement(By.id("txtSalaryAnual")).sendKeys(zipCode);
-		driver.findElement(By.id("txtFullName")).sendKeys(zipCode);
-		driver.findElement(By.id("txtNumberId")).sendKeys(zipCode);
-		driver.findElement(By.id("txtOccupation")).sendKeys(zipCode);
+		driver.findElement(By.id("txtOccupation")).sendKeys(occupation);
+		driver.findElement(By.id("txtSalaryAnual")).sendKeys(salary);
+		driver.findElement(By.id("txtFullName")).sendKeys(cony_name);
+		driver.findElement(By.id("txtNumberId")).sendKeys(cony_doc);
+		driver.findElement(By.id("txtOccupation")).sendKeys(cony_occupation);
 
 		WebElement chkExposedPerson = driver.findElement(By.id("chkExposedPerson"));
 		JavascriptExecutor jse_hkExposedPerson  = (JavascriptExecutor) driver;
-		jse_hkExposedPerson .executeScript("arguments[0].click();", chkExposedPerson );*/
+		jse_hkExposedPerson .executeScript("arguments[0].click();", chkExposedPerson );
+		driver.findElement(By.xpath("//span[@id='select2-txtAnnualIncome-container']")).click();
+		driver.findElement(By.xpath("//li[@class='select2-results__option select2-results__option--highlighted' and contains(text(), 'Sueldo')]")).click();
 
-		
-		
-		//System.out.println("Test de carga de contenido y automatización de flujo");
+		driver.findElement(By.id("btnSaveInfo")).click();
 
-		//driver.close();
+		driver.findElement(By.id("CardNumber")).sendKeys(card_number);
+
+		driver.findElement(By.id("btnSubmitStep4")).click();
+
+		//Final del test e2n, no puedo ingresar una tarjeta válida si no me facilitan el dato de la tarjeta demo.
+
+	
+
+		driver.close();
 		
 	}
 	
-	/* ---- Test ejemplo de assert de contenido de texto, se validan textos de la primer pagina---- 
+	
 
 	@Test 
 	
@@ -236,7 +257,7 @@ class QaAutomationApplicationTests {
 		System.out.println("Test de validación de elementos de texto");
 		driver.close();
 
-	}*/
+	}
 
 	
 }
