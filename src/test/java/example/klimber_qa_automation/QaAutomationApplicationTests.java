@@ -93,7 +93,6 @@ class QaAutomationApplicationTests {
 		String name = "Damian";
 		String surname = "Zampini";
 		String doc = "12345678";
-		//String pass = "Dynamic1234";
 		String street ="pedro goyena";
 		String houseNumber = "5";
 		String dpto = "c";
